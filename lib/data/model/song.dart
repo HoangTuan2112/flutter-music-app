@@ -20,7 +20,7 @@ class Song {
   final String source;
   final String image;
   final int duration;
-  final bool favorite;
+  final String favorite;
   final int counter;
   final int replay;
 
@@ -50,6 +50,11 @@ class Song {
       counter: json['counter'],
       replay: json['replay'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'Song{id: $id, title: $title, album: $album, artist: $artist, source: $source, image: $image, duration: $duration, favorite: $favorite, counter: $counter, replay: $replay}';
   }
 
   @override
