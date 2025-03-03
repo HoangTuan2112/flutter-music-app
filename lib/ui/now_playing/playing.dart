@@ -32,18 +32,21 @@ class _NowPlayingPageState extends State<NowPlayingPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _imageAnimationController;
   late AudioPlayerManager _audioPlayerManager;
+  late int _selectedItemIndex;
+  late Song _song;
 
   @override
   void initState() {
     super.initState();
+    _song = widget.playingSong;
     _imageAnimationController = AnimationController(
       duration: const Duration(seconds: 12000),
       vsync: this,
     );
-    _audioPlayerManager =
-        AudioPlayerManager(songUrl: widget.playingSong.source);
+    _audioPlayerManager = AudioPlayerManager(songUrl: _song.source);
 
     _audioPlayerManager.init();
+    _selectedItemIndex = widget.songs.indexOf(widget.playingSong);
   }
 
   @override
@@ -65,7 +68,7 @@ class _NowPlayingPageState extends State<NowPlayingPage>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  widget.playingSong.album,
+                  _song.album,
                 ),
                 const SizedBox(height: 16),
                 Text('_ ___ _'),
@@ -77,7 +80,7 @@ class _NowPlayingPageState extends State<NowPlayingPage>
                     borderRadius: BorderRadius.circular(radius),
                     child: FadeInImage.assetNetwork(
                       placeholder: 'assets/imageIcon.jpg',
-                      image: widget.playingSong.image,
+                      image: _song.image,
                       width: screenWidth - delta,
                       height: screenWidth - delta,
                       imageErrorBuilder: (context, error, stackStrace) {
@@ -104,7 +107,7 @@ class _NowPlayingPageState extends State<NowPlayingPage>
                         Column(
                           children: [
                             Text(
-                              widget.playingSong.title,
+                              _song.title,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
@@ -116,7 +119,7 @@ class _NowPlayingPageState extends State<NowPlayingPage>
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              widget.playingSong.artist,
+                             _song.artist,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
@@ -177,7 +180,6 @@ class _NowPlayingPageState extends State<NowPlayingPage>
           progressBarColor: Colors.green,
           bufferedBarColor: Colors.grey.withOpacity(0.5),
           thumbColor: Colors.deepPurple,
-
         );
       },
     );
@@ -230,6 +232,30 @@ class _NowPlayingPageState extends State<NowPlayingPage>
     );
   }
 
+  void setNextSong() {
+    ++_selectedItemIndex;
+    if(_selectedItemIndex >= widget.songs.length){
+      _selectedItemIndex = 0;
+    }
+    final nextSong = widget.songs[_selectedItemIndex];
+    _audioPlayerManager.updateSong(nextSong.source);
+    setState(() {
+      _song = nextSong;
+    });
+  }
+
+  void setPrevSong() {
+    --_selectedItemIndex;
+    if(_selectedItemIndex < 0){
+      _selectedItemIndex = widget.songs.length - 1;
+    }
+    final nextSong = widget.songs[_selectedItemIndex];
+    _audioPlayerManager.updateSong(nextSong.source);
+    setState(() {
+      _song = nextSong;
+    });
+  }
+
   Widget _mediaButtons() {
     return SizedBox(
       child: Row(
@@ -242,14 +268,14 @@ class _NowPlayingPageState extends State<NowPlayingPage>
             size: 24,
           ),
           MediaButtonControl(
-            function: () {},
+            function: setPrevSong,
             icon: Icons.skip_previous,
             color: Colors.deepPurple,
             size: 36,
           ),
           _playButton(),
           MediaButtonControl(
-            function: () {},
+            function: setNextSong,
             icon: Icons.skip_next,
             color: Colors.deepPurple,
             size: 36,

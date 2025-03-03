@@ -22,6 +22,11 @@ class AudioPlayerManager{
   void dispose(){
     player.dispose();
   }
+
+  void updateSong(String source) {
+    songUrl = source;
+    init();
+  }
 }
 class DurationState {
   final dynamic buffered;
