@@ -19,6 +19,9 @@ class AudioPlayerManager{
     player.setUrl(songUrl);
 
   }
+  void dispose(){
+    player.dispose();
+  }
 }
 class DurationState {
   final dynamic buffered;
