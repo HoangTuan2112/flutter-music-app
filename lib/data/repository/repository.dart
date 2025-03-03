@@ -6,7 +6,7 @@ abstract interface class Repository {
   Future<List<Song>?> getSources();
 }
 
-class defaultRepository implements Repository {
+class DefaultRepository implements Repository {
   final DataSource _remoteDataSource = RemoteDataSource();
   final DataSource _localDataSource = LocalDataSource();
 
